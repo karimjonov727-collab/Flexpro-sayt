@@ -1,0 +1,12 @@
+{
+  "name": "flexpro-sayt",
+  "version": "1.0.0",
+  "description": "FlexPro (BIOGENICA) lead-gen sayt — lidlar Telegram guruhga tushadi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
