@@ -691,10 +691,23 @@
       if (audio.paused){
         if (currentAudio && currentAudio !== audio) currentAudio.pause();
         currentAudio = audio;
-        audio.play();
+        var p = audio.play();
+        if (p && p.catch) p.catch(function(er){ showErr('play: ' + (er && er.name ? er.name : 'xato')); });
       } else {
         audio.pause();
       }
+    });
+    function showErr(msg){
+      v.classList.remove('playing');
+      timeEl.textContent = '⚠';
+      var sub = v.querySelector('.voice-sub');
+      sub.textContent = "Yuklanmadi (" + msg + ") — sahifani yangilang yoki boshqa brauzerda oching";
+      sub.style.color = '#f2b8a5';
+    }
+    audio.addEventListener('error', function(){
+      var codes = {1:'ABORTED',2:'NETWORK',3:'DECODE',4:'SRC_NOT_SUPPORTED'};
+      var c = audio.error ? (codes[audio.error.code] || audio.error.code) : '?';
+      showErr(c);
     });
     audio.addEventListener('play', function(){ v.classList.add('playing'); });
     audio.addEventListener('pause', function(){ v.classList.remove('playing'); });
