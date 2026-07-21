@@ -200,7 +200,7 @@
   .form-note{margin:0 0 22px;color:var(--ink-soft);font-size:18px}
   form{display:flex;flex-direction:column;gap:18px}
   label{font-weight:600;font-size:18px;display:block;margin-bottom:6px}
-  input[type=text], input[type=tel]{
+  input[type=text], input[type=tel], textarea{
     width:100%;box-sizing:border-box;
     font-size:22px;font-family:inherit;
     padding:16px 16px;
@@ -209,6 +209,7 @@
     background:var(--ground);
     color:var(--ink);
   }
+  textarea{resize:vertical;min-height:96px;font-size:20px}
   input:focus-visible{outline:3px solid var(--navy);outline-offset:1px;border-color:var(--navy)}
   .btn{
     display:block;width:100%;
@@ -429,6 +430,10 @@
               <label for="phone" data-i18n="phoneLabel">Телефон рақамингиз</label>
               <input type="tel" id="phone" name="phone" placeholder="+998 __ ___-__-__" autocomplete="tel" required>
             </div>
+            <div>
+              <label for="problem" data-i18n="problemLabel">Сизни нима безовта қилади? (ихтиёрий)</label>
+              <textarea id="problem" name="problem" rows="3" maxlength="500" placeholder="Масалан: тиззам оғрийди, юришга қийналаман" data-i18n-ph="problemPh"></textarea>
+            </div>
             <p class="form-err" aria-live="polite"></p>
             <button class="btn" type="submit" data-i18n="submitBtn">Менга қўнғироқ қилинг</button>
             <p class="reassure">
@@ -436,11 +441,6 @@
               <span data-i18n="reassure">Рақамингиз фақат қўнғироқ учун ишлатилади ва ҳеч кимга берилмайди.</span>
             </p>
           </form>
-        </div>
-        <div class="success" aria-live="polite">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00244f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg>
-          <h3 data-i18n="successTitle">Раҳмат! Аризангиз қабул қилинди.</h3>
-          <p data-i18n="successText">Операторимиз 15 дақиқа ичида сизга қўнғироқ қилади. Телефонингизни ёнингизда сақланг.</p>
         </div>
       </div>
     </div>
@@ -597,6 +597,10 @@
               <label for="phone2" data-i18n="phoneLabel">Телефон рақамингиз</label>
               <input type="tel" id="phone2" name="phone" placeholder="+998 __ ___-__-__" autocomplete="tel" required>
             </div>
+            <div>
+              <label for="problem2" data-i18n="problemLabel">Сизни нима безовта қилади? (ихтиёрий)</label>
+              <textarea id="problem2" name="problem" rows="3" maxlength="500" placeholder="Масалан: тиззам оғрийди, юришга қийналаман" data-i18n-ph="problemPh"></textarea>
+            </div>
             <p class="form-err" aria-live="polite"></p>
             <button class="btn" type="submit" data-i18n="submitBtn">Менга қўнғироқ қилинг</button>
             <p class="reassure">
@@ -604,11 +608,6 @@
               <span data-i18n="reassure">Рақамингиз фақат қўнғироқ учун ишлатилади ва ҳеч кимга берилмайди.</span>
             </p>
           </form>
-        </div>
-        <div class="success" aria-live="polite">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00244f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg>
-          <h3 data-i18n="successTitle">Раҳмат! Аризангиз қабул қилинди.</h3>
-          <p data-i18n="successText">Операторимиз 15 дақиқа ичида сизга қўнғироқ қилади. Телефонингизни ёнингизда сақланг.</p>
         </div>
       </div>
     </div>
@@ -647,6 +646,8 @@
       nameLabel: "Исмингиз",
       namePh: "Масалан: Санобар",
       phoneLabel: "Телефон рақамингиз",
+      problemLabel: "Сизни нима безовта қилади? (ихтиёрий)",
+      problemPh: "Масалан: тиззам оғрийди, юришга қийналаман",
       submitBtn: "Менга қўнғироқ қилинг",
       sending: "Юборилмоқда...",
       reassure: "Рақамингиз фақат қўнғироқ учун ишлатилади ва ҳеч кимга берилмайди.",
@@ -707,6 +708,8 @@
       nameLabel: "Ваше имя",
       namePh: "Например: Санобар",
       phoneLabel: "Ваш номер телефона",
+      problemLabel: "Что вас беспокоит? (необязательно)",
+      problemPh: "Например: болят колени, трудно ходить",
       submitBtn: "Позвоните мне",
       sending: "Отправляем...",
       reassure: "Ваш номер используется только для звонка и никому не передаётся.",
@@ -783,11 +786,11 @@
   document.querySelectorAll('form').forEach(function(f){
     f.addEventListener('submit', function(e){
       e.preventDefault();
-      var card = f.closest('.form-card');
       var btn = f.querySelector('.btn');
       var err = f.querySelector('.form-err');
       var name = (f.querySelector('input[type=text]') || {value:''}).value.trim();
       var phone = f.querySelector('input[type=tel]').value.trim();
+      var problem = (f.querySelector('textarea') || {value:''}).value.trim();
       var digits = phone.replace(/\D/g, '');
       if (digits.length < 9){
         err.textContent = t('errPhone');
@@ -803,15 +806,14 @@
         body: JSON.stringify({
           name: name,
           phone: phone,
+          problem: problem,
           manba: (f.getAttribute('data-manba') || '') + ' · ' + (LANG === 'ru' ? 'РУС' : 'ЎЗБ')
         })
       })
       .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
       .then(function(j){
         if (!j.ok) throw new Error('server');
-        card.querySelector('.form-body').style.display = 'none';
-        card.querySelector('.success').style.display = 'block';
-        card.scrollIntoView({behavior:'smooth', block:'center'});
+        window.location.href = '/rahmat';
       })
       .catch(function(){
         btn.disabled = false;

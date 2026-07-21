@@ -99,12 +99,13 @@ const server = http.createServer((req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
       if (rateLimited(ip)) { res.statusCode = 429; return res.end('{"ok":false}'); }
-      let name = '', phone = '', manba = '';
+      let name = '', phone = '', manba = '', problem = '';
       try {
         const j = JSON.parse(body || '{}');
         name = String(j.name || '').slice(0, 100).trim();
         phone = String(j.phone || '').slice(0, 30).trim();
         manba = String(j.manba || '').slice(0, 50).trim();
+        problem = String(j.problem || '').slice(0, 500).trim();
       } catch (e) { /* bo'sh qoladi */ }
       const digits = phone.replace(/\D/g, '');
       if (digits.length < 7) { res.statusCode = 400; return res.end('{"ok":false,"err":"phone"}'); }
@@ -113,6 +114,7 @@ const server = http.createServer((req, res) => {
       const text = '🆕 FLEXPRO saytidan yangi lid!\n\n' +
         '👤 Ism: ' + (name || '—') + '\n' +
         '📞 Tel: ' + phone + '\n' +
+        (problem ? '🩺 Muammosi: ' + problem + '\n' : '') +
         '📍 Forma: ' + (manba || '—') + '\n' +
         '🕒 ' + vaqt + ' (Toshkent)';
       try {
@@ -144,6 +146,7 @@ const server = http.createServer((req, res) => {
   try { p = decodeURIComponent(String(req.url || '/').split('?')[0]); }
   catch (e) { res.statusCode = 400; return res.end(); }
   if (p === '/') p = '/index.html';
+  if (p === '/rahmat' || p === '/rahmat/') p = '/rahmat.html';
   const file = path.normalize(path.join(PUB, p));
   if (!file.startsWith(PUB)) { res.statusCode = 403; return res.end(); }
   serveFile(req, res, file);
